@@ -6,8 +6,12 @@ A professional Flutter application that displays real-time cryptocurrency prices
 ![Dart](https://img.shields.io/badge/Dart-3.0+-0175C2?style=flat&logo=dart)
 ![GetX](https://img.shields.io/badge/GetX-4.6.6-8B5CF6?style=flat)
 
-## 📱 Screenshots
-![Uploading WhatsApp Image 2025-11-26 at 20.01.03.jpeg…]()      ![Uploading WhatsApp Image 2025-11-26 at 20.00.55.jpeg…]()
+## 📱 Demo
+
+
+ 
+
+https://github.com/user-attachments/assets/36a1a6f2-2164-41ee-8695-5e87421327f8
 
 
 
