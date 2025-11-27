@@ -142,7 +142,7 @@ Add internet permission in `android/app/src/main/AndroidManifest.xml`:
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <!-- Rest of your manifest -->
+
 </manifest>
 ```
 
