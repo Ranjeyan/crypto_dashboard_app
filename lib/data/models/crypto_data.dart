@@ -30,8 +30,7 @@ class CryptoData {
       symbol: json['symbol'].toString().toUpperCase(),
       currentPrice: json['current_price'].toDouble(),
       priceChange24h: json['price_change_24h']?.toDouble() ?? 0.0,
-      priceChangePercentage24h:
-      json['price_change_percentage_24h']?.toDouble() ?? 0.0,
+      priceChangePercentage24h: json['price_change_percentage_24h']?.toDouble() ?? 0.0,
       image: json['image'],
       high24h: json['high_24h']?.toDouble() ?? 0.0,
       low24h: json['low_24h']?.toDouble() ?? 0.0,

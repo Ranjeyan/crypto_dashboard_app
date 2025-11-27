@@ -1,6 +1,7 @@
 import 'package:crypto_price_dashboard/routes/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'controllers/chatbot_controller.dart';
 import 'controllers/crypto_controller.dart';
 import 'core/themes/app_theme.dart';
 
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
       getPages: AppRoutes.routes,
       initialBinding: BindingsBuilder(() {
         Get.put(CryptoController());
+        Get.put(ChatbotController());
       }),
     );
   }

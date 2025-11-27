@@ -1,93 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../../../data/models/chart_data.dart';
 
-class PriceChart extends StatefulWidget {
-  final String symbol;
+class PriceChart extends StatelessWidget {
+  final List<ChartData> data;
+  final bool isPositive;
 
-  PriceChart({required this.symbol});
-
-  @override
-  State<PriceChart> createState() => _PriceChartState();
-}
-
-class _PriceChartState extends State<PriceChart> {
-  late final WebViewController controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // TradingView HTML content
-    final String tradingViewHtml = '''
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-        <style>
-          * { margin: 0; padding: 0; box-sizing: border-box; }
-          html, body { 
-            height: 100%; 
-            width: 100%; 
-            overflow: hidden;
-            background-color: #16213e; 
-          }
-          #tradingview_widget { 
-            height: 100vh !important; 
-            width: 100vw !important; 
-          }
-          .tradingview-widget-container {
-            height: 100% !important;
-            width: 100% !important;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="tradingview-widget-container">
-          <div id="tradingview_widget"></div>
-        </div>
-        
-        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-        <script type="text/javascript">
-          new TradingView.widget({
-            "width": "100%",
-            "height": "100%",
-            "autosize": true,
-            "symbol": "${widget.symbol.toUpperCase()}USD",
-            "interval": "D",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "toolbar_bg": "#16213e",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "hide_legend": false,
-            "save_image": false,
-            "container_id": "tradingview_widget"
-          });
-        </script>
-      </body>
-      </html>
-    ''';
-
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF16213e))
-      ..loadHtmlString(tradingViewHtml);
-  }
+  const PriceChart({
+    Key? key,
+    required this.data,
+    required this.isPositive,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 500,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Color(0xFF16213e),
-        borderRadius: BorderRadius.circular(12),
+    if (data.isEmpty) {
+      return const Center(child: Text('No data available'));
+    }
+
+    final spots = data
+        .asMap()
+        .entries
+        .map((entry) => FlSpot(
+      entry.key.toDouble(),
+      entry.value.price,
+    ))
+        .toList();
+
+    final minPrice = data.map((e) => e.price).reduce((a, b) => a < b ? a : b);
+    final maxPrice = data.map((e) => e.price).reduce((a, b) => a > b ? a : b);
+
+    final lineColor = isPositive ? Colors.green : Colors.red;
+    final gradientStartColor = isPositive
+        ? Colors.green.withValues(alpha: 0.3)
+        : Colors.red.withValues(alpha: 0.3);
+    final gradientEndColor = isPositive
+        ? Colors.green.withValues(alpha: 0.0)
+        : Colors.red.withValues(alpha: 0.0);
+
+    return LineChart(
+      LineChartData(
+        gridData: const FlGridData(show: false),
+        titlesData: const FlTitlesData(show: false),
+        borderData: FlBorderData(show: false),
+        minX: 0,
+        maxX: spots.length.toDouble() - 1,
+        minY: minPrice * 0.99,
+        maxY: maxPrice * 1.01,
+        lineTouchData: LineTouchData(
+          touchTooltipData: LineTouchTooltipData(
+            getTooltipItems: (List<LineBarSpot> touchedSpots) {
+              return touchedSpots.map((lineBarSpot) {
+                final formattedPrice = lineBarSpot.y.toStringAsFixed(3);
+
+                return LineTooltipItem(
+                  '\$$formattedPrice',
+                  const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              }).toList();
+            },
+          ),
+        ),
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            color: lineColor,
+            barWidth: 3,
+            dotData: const FlDotData(show: false),
+            belowBarData: BarAreaData(
+              show: true,
+              gradient: LinearGradient(
+                colors: [
+                  gradientStartColor,
+                  gradientEndColor,
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+        ],
       ),
-      clipBehavior: Clip.hardEdge,
-      child: WebViewWidget(controller: controller),
     );
   }
 }

@@ -9,7 +9,7 @@ class CryptoCard extends StatelessWidget {
   final CryptoData crypto;
   final CryptoController controller = Get.find();
 
-  CryptoCard({required this.crypto});
+  CryptoCard({super.key, required this.crypto});
 
   @override
   Widget build(BuildContext context) {

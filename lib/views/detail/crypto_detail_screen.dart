@@ -4,9 +4,21 @@ import 'package:intl/intl.dart';
 import '../../controllers/crypto_controller.dart';
 import 'widgets/price_chart.dart';
 import 'widgets/stat_row.dart';
+import 'widgets/trading_view_chart.dart';
 
 class CryptoDetailScreen extends StatelessWidget {
-  final CryptoController controller = Get.find();
+  CryptoDetailScreen({Key? key}) : super(key: key);
+
+  final CryptoController controller = Get.find<CryptoController>();
+
+  void _showTradingViewChart(BuildContext context, String symbol) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => TradingViewChart(symbol: symbol),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +29,7 @@ class CryptoDetailScreen extends StatelessWidget {
       body: Obx(() {
         final crypto = controller.selectedCrypto.value;
         if (crypto == null) {
-          return Center(child: Text('No cryptocurrency selected'));
+          return const Center(child: Text('No cryptocurrency selected'));
         }
 
         final isPositive = crypto.priceChangePercentage24h >= 0;
@@ -25,7 +37,7 @@ class CryptoDetailScreen extends StatelessWidget {
         final compactFormatter = NumberFormat.compact();
 
         return SingleChildScrollView(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -38,12 +50,14 @@ class CryptoDetailScreen extends StatelessWidget {
                         crypto.image,
                         width: 100,
                         height: 100,
+                        errorBuilder: (context, error, stackTrace) =>
+                        const Icon(Icons.currency_bitcoin, size: 100),
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       crypto.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
@@ -56,22 +70,22 @@ class CryptoDetailScreen extends StatelessWidget {
                         color: Colors.grey[400],
                       ),
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     Text(
                       formatter.format(crypto.currentPrice),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
                         color: isPositive
-                            ? Colors.green.withOpacity(0.2)
-                            : Colors.red.withOpacity(0.2),
+                            ? Colors.green.withValues(alpha: 0.2)
+                            : Colors.red.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -86,20 +100,72 @@ class CryptoDetailScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 16),
-              Text(
-                'TradingView Chart',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '7 Day Price Chart',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              SizedBox(height: 16),
-              // TradingView Chart
-              PriceChart(symbol: crypto.symbol),
-              SizedBox(height: 32),
-              Text(
+              const SizedBox(height: 16),
+              Obx(() {
+                if (controller.isLoading.value && controller.chartData.isEmpty) {
+                  return Container(
+                    height: 250,
+                    child: const Center(child: CircularProgressIndicator(color: Colors.blue)),
+                  );
+                }
+
+                if (controller.chartData.isEmpty) {
+                  return Container(
+                    height: 250,
+                    child: const Center(child: Text('No chart data available')),
+                  );
+                }
+
+                return GestureDetector(
+                  onTap: () => _showTradingViewChart(context, crypto.symbol),
+                  child: Container(
+                    height: 250,
+                    child: Stack(
+                      children: [
+                        PriceChart(data: controller.chartData, isPositive: isPositive),
+                        Positioned(
+                          bottom: 8,
+                          right: 8,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.open_in_full, color: Colors.white, size: 16),
+                                SizedBox(width: 4),
+                                Text(
+                                  'Expand',
+                                  style: TextStyle(color: Colors.white, fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 32),
+              const Text(
                 'Statistics',
                 style: TextStyle(
                   fontSize: 20,
@@ -107,7 +173,7 @@ class CryptoDetailScreen extends StatelessWidget {
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               StatRow(label: '24h High', value: formatter.format(crypto.high24h)),
               StatRow(label: '24h Low', value: formatter.format(crypto.low24h)),
               StatRow(
