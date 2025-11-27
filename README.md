@@ -31,6 +31,7 @@ https://github.com/user-attachments/assets/36a1a6f2-2164-41ee-8695-5e87421327f8
 
 ### Core Features
 - ✅ **Real-time Cryptocurrency Data** - Fetches live data from CoinGecko API
+- ✅ AI-Powered Chatbot - Gemini AI integration for crypto insights and queries
 - ✅ **Interactive TradingView Charts** - Professional trading charts with technical analysis tools
 - ✅ **Multi-Screen Navigation** - Smooth routing between dashboard and detail screens
 - ✅ **Price Tracking** - Monitor 24h price changes and percentage movements
@@ -45,6 +46,7 @@ https://github.com/user-attachments/assets/36a1a6f2-2164-41ee-8695-5e87421327f8
 - ✅ **API Integration** - RESTful API calls to CoinGecko
 - ✅ **Error Handling** - Graceful error management and user feedback
 - ✅ **Responsive Design** - Adapts to different screen sizes
+- ✅ Lottie Animations - Smooth and engaging UI animations
 
 ## 🏗️ Architecture
 
@@ -56,26 +58,34 @@ lib/
 ├── core/
 │   ├── constants/
 │   │   └── api_constants.dart         # API endpoints and URLs
-│   └── themes/
-│       └── app_theme.dart             # Application theming
+│   ├── themes/
+│   │   └── app_theme.dart             # Application theming
+│   └── utils/
+│       └── responsive.dart            # Responsive layout utilities
 ├── data/
 │   ├── models/
 │   │   ├── crypto_data.dart           # Cryptocurrency data model
-│   │   └── chart_data.dart            # Chart data model
+│   │   ├── chart_data.dart            # Chart data model
+│   │   └── chat_message.dart          # Chat message model
 │   └── providers/
 │       └── crypto_api_provider.dart   # API service layer
+├── services/
+│   └── gemini_services.dart           # Gemini AI service
 ├── controllers/
-│   └── crypto_controller.dart         # GetX controller (Business logic)
+│   ├── crypto_controller.dart         # GetX controller (Business logic)
+│   └── chatbot_controller.dart        # Chatbot controller
 ├── views/
 │   ├── dashboard/
 │   │   ├── dashboard_screen.dart      # Main dashboard UI
 │   │   └── widgets/
 │   │       └── crypto_card.dart       # Cryptocurrency card widget
-│   └── detail/
-│       ├── crypto_detail_screen.dart  # Detail screen UI
-│       └── widgets/
-│           ├── price_chart.dart       # TradingView chart widget
-│           └── stat_row.dart          # Statistics row widget
+│   ├── detail/
+│   │   ├── crypto_detail_screen.dart  # Detail screen UI
+│   │   └── widgets/
+│   │       ├── price_chart.dart       # TradingView chart widget
+│   │       └── stat_row.dart          # Statistics row widget
+│   └── chatbot/
+│       └── chatbot_screen.dart        # Chatbot screen UI
 └── routes/
     └── app_routes.dart                # Route definitions
 ```
@@ -97,15 +107,15 @@ lib/
 4. **Core Layer** (`core/`)
    - Constants and configurations
    - Themes and styling
+   - Utility functions
+
+ 5. **Service Layer** (`services/`)
+   - Constants and configurations
+   - Themes and styling
+ 
 
 ## 🚀 Getting Started
 
-### Prerequisites
-
-- Flutter SDK (3.0 or higher)
-- Dart SDK (3.0 or higher)
-- Android Studio / VS Code
-- Git
 
 ### Installation
 
@@ -143,10 +153,11 @@ No additional setup required. Internet permissions are enabled by default.
 
 | Package | Version | Purpose |
 |---------|---------|---------|
-| `get` | ^4.6.6 | State management, DI, and routing |
-| `http` | ^1.1.0 | HTTP requests to CoinGecko API |
-| `webview_flutter` | ^4.4.2 | Embedding TradingView charts |
-| `intl` | ^0.18.1 | Number and currency formatting |
+| `get` | ^4.7.3 | State management, DI, and routing |
+| `http` | ^1.6.0 | HTTP requests to CoinGecko API |
+| `webview_flutter` | ^4.13.0 | Embedding TradingView charts |
+| `intl` | ^0.20.2 | Number and currency formatting |
+| `lottie` | ^3.3.2 | Embedding Animations |
 
 ## 🔧 Configuration
 
@@ -254,23 +265,4 @@ Future<List<CryptoData>> fetchCryptoList() async {
    - 24h High price
    - 24h Low price
    - Market capitalization
-
-
-
-## 🔐 Security Considerations
-
-- ✅ Uses HTTPS for all API calls
-- ✅ No API keys stored in code (using free public API)
-- ✅ No sensitive user data collected
-- ✅ Proper error handling for network failures
-
-
-
-
-## 🙏 Acknowledgments
-
-- [CoinGecko](https://www.coingecko.com/) for providing free cryptocurrency API
-- [TradingView](https://www.tradingview.com/) for charting library
-- [GetX](https://pub.dev/packages/get) for state management solution
-- Flutter community for excellent packages and support
 
