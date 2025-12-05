@@ -110,8 +110,7 @@ lib/
    - Utility functions
 
  5. **Service Layer** (`services/`)
-   - Constants and configurations
-   - Themes and styling
+   - Gemini Services
  
 
 ## 🚀 Getting Started
